@@ -326,7 +326,7 @@ const InventoryManagementWebsite = () => {
                 transition={{ duration: 0.8, delay: 0.6 }}
                 className="text-4xl lg:text-6xl font-bold text-white mb-6 leading-tight"
               >
-                Transform Your
+                Revolutionize Your
                 <span className="text-blue-300 block drop-shadow-lg">Inventory Management</span>
               </motion.h1>
               <motion.p 
