@@ -11,6 +11,12 @@ const InventoryManagementWebsite = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [animatedNumbers, setAnimatedNumbers] = useState({
+    companies: 0,
+    costReduction: 0,
+    satisfaction: 0,
+    support: 0
+  });
 
   useEffect(() => {
     setMounted(true);
@@ -27,6 +33,11 @@ const InventoryManagementWebsite = () => {
           if (entry.isIntersecting) {
             const id = entry.target.id;
             setActiveSection(id);
+            
+            // Animate numbers when statistics section is visible
+            if (id === 'statistics') {
+              animateNumbers();
+            }
           }
         });
       },
@@ -38,6 +49,36 @@ const InventoryManagementWebsite = () => {
 
     return () => observer.disconnect();
   }, []);
+
+  const animateNumbers = () => {
+    const duration = 2000; // 2 seconds
+    const steps = 60;
+    const stepDuration = duration / steps;
+    
+    let currentStep = 0;
+    
+    const interval = setInterval(() => {
+      currentStep++;
+      const progress = currentStep / steps;
+      
+      setAnimatedNumbers({
+        companies: Math.floor(500 * progress),
+        costReduction: Math.floor(30 * progress),
+        satisfaction: Math.floor(95 * progress),
+        support: 24 // Keep as 24/7
+      });
+      
+      if (currentStep >= steps) {
+        clearInterval(interval);
+        setAnimatedNumbers({
+          companies: 500,
+          costReduction: 30,
+          satisfaction: 95,
+          support: 24
+        });
+      }
+    }, stepDuration);
+  };
 
   const services = [
     {
@@ -638,7 +679,7 @@ const InventoryManagementWebsite = () => {
                         </li>
                       ))}
                     </ul>
-                    <Button className="w-full group relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 hover:shadow-lg transition-all duration-300 border-0">
+                    <Button className="w-full group relative overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 transform hover:scale-105 hover:shadow-lg transition-all duration-300 border-0 cursor-pointer">
                       <span className="relative z-10 flex items-center justify-center">
                         Learn More
                         <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
@@ -697,16 +738,24 @@ const InventoryManagementWebsite = () => {
       </section>
 
       {/* Statistics Section */}
-      <section className="py-20 hero-gradient relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-10 w-20 h-20 bg-blue-500/10 rounded-full animate-pulse"></div>
-          <div className="absolute top-20 right-20 w-16 h-16 bg-green-500/10 rounded-full animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute bottom-20 left-1/4 w-24 h-24 bg-purple-500/10 rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
-          <div className="absolute bottom-10 right-1/4 w-12 h-12 bg-orange-500/10 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }}></div>
-        </div>
+      <section id="statistics" className="py-20 relative overflow-hidden">
+        {/* Realistic Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
+          }}
+        ></div>
         
-        <div className="absolute inset-0 bg-black/30"></div>
+        {/* Professional overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95"></div>
+        
+        {/* Subtle geometric pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='grid' width='10' height='10' patternUnits='userSpaceOnUse'%3E%3Cpath d='M 10 0 L 0 0 0 10' fill='none' stroke='%23ffffff' stroke-width='0.5' opacity='0.1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23grid)'/%3E%3C/svg%3E")`
+          }}></div>
+        </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div 
             initial={{ y: 30, opacity: 0 }}
@@ -734,7 +783,12 @@ const InventoryManagementWebsite = () => {
           </motion.div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
+            {[
+              { icon: <Users className="h-8 w-8" />, value: animatedNumbers.companies + "+", label: "Companies Served", color: "text-blue-400", bgColor: "from-blue-500 to-blue-600" },
+              { icon: <DollarSign className="h-8 w-8" />, value: animatedNumbers.costReduction + "%", label: "Average Cost Reduction", color: "text-green-400", bgColor: "from-green-500 to-green-600" },
+              { icon: <Target className="h-8 w-8" />, value: animatedNumbers.satisfaction + "%", label: "Client Satisfaction", color: "text-purple-400", bgColor: "from-purple-500 to-purple-600" },
+              { icon: <Clock className="h-8 w-8" />, value: "24/7", label: "Support Available", color: "text-orange-400", bgColor: "from-orange-500 to-orange-600" }
+            ].map((stat, index) => (
               <motion.div
                 key={index}
                 initial={{ y: 50, opacity: 0 }}
@@ -749,22 +803,19 @@ const InventoryManagementWebsite = () => {
                 className="group"
               >
                 <div className="relative">
-                  {/* Glowing background effect */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
-                  
-                  {/* Main card */}
-                  <div className="relative glass-professional p-8 rounded-2xl text-center border border-white/10 hover:border-white/20 transition-all duration-300 shadow-dark hover:shadow-elevated">
-                    {/* Animated icon background */}
+                  {/* Professional card with enhanced design */}
+                  <div className="relative bg-white/10 backdrop-blur-md p-8 rounded-2xl text-center border border-white/20 hover:border-white/40 transition-all duration-300 shadow-2xl hover:shadow-3xl">
+                    {/* Enhanced icon with professional styling */}
                     <motion.div 
-                      className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 relative overflow-hidden`}
-                      whileHover={{ scale: 1.1 }}
+                      className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 relative overflow-hidden shadow-lg`}
+                      whileHover={{ scale: 1.1, rotate: 5 }}
                       transition={{ duration: 0.3 }}
                     >
-                      {/* Gradient background for icon */}
-                      <div className={`absolute inset-0 bg-gradient-to-br ${getIconGradient(stat.color)} rounded-full`}></div>
+                      {/* Gradient background */}
+                      <div className={`absolute inset-0 bg-gradient-to-br ${stat.bgColor} rounded-full`}></div>
                       
-                      {/* Shimmer effect */}
-                      <div className="absolute inset-0 animate-shimmer"></div>
+                      {/* Shimmer overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
                       
                       {/* Icon */}
                       <div className="relative z-10 text-white">
@@ -772,9 +823,9 @@ const InventoryManagementWebsite = () => {
                       </div>
                     </motion.div>
                     
-                    {/* Animated number */}
+                    {/* Animated number with enhanced typography */}
                     <motion.div 
-                      className="text-5xl lg:text-6xl font-bold text-white mb-3"
+                      className="text-5xl lg:text-6xl font-bold text-white mb-3 font-mono tracking-tight"
                       initial={{ scale: 0.5, opacity: 0 }}
                       whileInView={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.8, delay: index * 0.2 + 0.3 }}
@@ -783,13 +834,13 @@ const InventoryManagementWebsite = () => {
                       {stat.value}
                     </motion.div>
                     
-                    {/* Label with enhanced styling */}
-                    <div className="text-gray-200 font-semibold text-lg tracking-wide">
+                    {/* Enhanced label */}
+                    <div className="text-gray-200 font-semibold text-lg tracking-wide mb-2">
                       {stat.label}
                     </div>
                     
-                    {/* Subtle description */}
-                    <div className="text-gray-400 text-sm mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    {/* Professional description */}
+                    <div className="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       {getStatDescription(stat.label)}
                     </div>
                   </div>
