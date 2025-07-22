@@ -2,7 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Menu, X, Check, ArrowRight, BarChart3, Cog, TrendingUp, Shield, Users, Award, Phone, Mail, MapPin, Star, Warehouse, Truck, Factory, ShoppingCart, Zap, Target, Clock, DollarSign, Package } from 'lucide-react';
+import useEmblaCarousel from 'embla-carousel-react';
+
+import { ChevronRight, Menu, X, Check, ArrowRight, BarChart3, Cog, TrendingUp, Shield, Users, Award, Phone, Mail, MapPin, Star, Warehouse, Truck, Factory, ShoppingCart, Zap, Target, Clock, DollarSign, Package, Building2, TrendingDown, Heart, ChevronUp, ChevronLeft } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './components/ui/card';
 import { Badge } from './components/ui/badge';
@@ -13,11 +15,24 @@ const InventoryManagementWebsite = () => {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [animatedNumbers, setAnimatedNumbers] = useState({
     companies: 0,
     costReduction: 0,
     satisfaction: 0,
     support: 0
+  });
+  
+  // Carousel setup
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true,
+    align: 'start',
+    slidesToScroll: 1,
+    breakpoints: {
+      '(min-width: 768px)': { slidesToScroll: 2 },
+      '(min-width: 1024px)': { slidesToScroll: 4 }
+    }
   });
 
   useEffect(() => {
@@ -51,6 +66,40 @@ const InventoryManagementWebsite = () => {
 
     return () => observer.disconnect();
   }, []);
+
+  // Back to top functionality
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 500);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const scrollPrev = () => {
+    if (emblaApi) emblaApi.scrollPrev();
+  };
+
+  const scrollNext = () => {
+    if (emblaApi) emblaApi.scrollNext();
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    // Simulate form submission
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    setIsSubmitting(false);
+    // Here you would typically handle the actual form submission
+    alert('Thank you for your message! We\'ll get back to you soon.');
+  };
 
   const animateNumbers = () => {
     const duration = 2000; // 2 seconds
@@ -333,7 +382,7 @@ const InventoryManagementWebsite = () => {
           <motion.div
             animate={{ y: [20, -20, 20], rotate: [0, -5, 0] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-            className="absolute top-40 left-1/4 w-12 h-12 bg-green-500/20 rounded-lg backdrop-blur-sm border border-green-400/30"
+            className="absolute top-32 right-16 w-12 h-12 bg-green-500/20 rounded-lg backdrop-blur-sm border border-green-400/30"
           >
             <div className="p-2 text-green-300 text-xs font-mono">SKU-002</div>
           </motion.div>
@@ -358,7 +407,7 @@ const InventoryManagementWebsite = () => {
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="mb-6 relative"
+                className="mb-6 relative inline-block mt-8"
               >
                 {/* Animated glow */}
                 <div className="absolute inset-0 flex items-center justify-center z-0">
@@ -399,11 +448,11 @@ const InventoryManagementWebsite = () => {
                 transition={{ duration: 0.8, delay: 1 }}
                 className="flex flex-col sm:flex-row gap-4"
               >
-                <Button size="lg" className="shadow-elevated hover:shadow-professional bg-white text-blue-600 hover:bg-gray-100" suppressHydrationWarning>
+                <Button size="lg" className="shadow-elevated hover:shadow-professional bg-white text-blue-600 hover:bg-gray-100 cursor-pointer transform hover:scale-105 transition-all duration-300" suppressHydrationWarning>
                   Get Free Assessment
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button variant="glass" size="lg" className="border-2 border-white/50 text-white hover:bg-white/20" suppressHydrationWarning>
+                <Button variant="glass" size="lg" className="border-2 border-white/50 text-white hover:bg-white/20 cursor-pointer transform hover:scale-105 transition-all duration-300" suppressHydrationWarning>
                   Watch Demo
                 </Button>
               </motion.div>
@@ -720,8 +769,14 @@ const InventoryManagementWebsite = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-20 bg-white relative overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          }}></div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div 
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -747,14 +802,21 @@ const InventoryManagementWebsite = () => {
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: benefit.delay }}
                   viewport={{ once: true }}
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1.05, y: -5 }}
                   className="text-center group"
                 >
-                  <div className={`inline-flex items-center justify-center w-20 h-20 ${benefit.bgColor} rounded-full mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    <IconComponent className={`h-10 w-10 ${benefit.color}`} />
-                  </div>
-                  <h3 className="text-xl font-semibold text-professional-dark mb-2">{benefit.title}</h3>
-                  <p className="text-professional-light">{benefit.description}</p>
+                  <Card className="h-full p-6 bg-white shadow-soft hover:shadow-elevated transition-all duration-300 border-0 group-hover:border-blue-200">
+                    <CardContent className="p-0">
+                      <motion.div 
+                        className={`inline-flex items-center justify-center w-20 h-20 ${benefit.bgColor} rounded-full mb-6 group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-xl`}
+                        whileHover={{ rotate: 5 }}
+                      >
+                        <IconComponent className={`h-10 w-10 ${benefit.color} group-hover:scale-110 transition-transform duration-300`} />
+                      </motion.div>
+                      <h3 className="text-xl font-semibold text-professional-dark mb-3 group-hover:text-blue-600 transition-colors duration-300">{benefit.title}</h3>
+                      <p className="text-professional-light leading-relaxed">{benefit.description}</p>
+                    </CardContent>
+                  </Card>
                 </motion.div>
               );
             })}
@@ -811,10 +873,42 @@ const InventoryManagementWebsite = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { icon: <Users className="h-8 w-8" />, value: animatedNumbers.companies + "+", label: "Companies Served", color: "text-blue-400", bgColor: "from-blue-500 to-blue-600" },
-              { icon: <DollarSign className="h-8 w-8" />, value: animatedNumbers.costReduction + "%", label: "Average Cost Reduction", color: "text-green-400", bgColor: "from-green-500 to-green-600" },
-              { icon: <Target className="h-8 w-8" />, value: animatedNumbers.satisfaction + "%", label: "Client Satisfaction", color: "text-purple-400", bgColor: "from-purple-500 to-purple-600" },
-              { icon: <Clock className="h-8 w-8" />, value: "24/7", label: "Support Available", color: "text-orange-400", bgColor: "from-orange-500 to-orange-600" }
+              { 
+                icon: <Building2 className="h-10 w-10" />, 
+                value: animatedNumbers.companies + "+", 
+                label: "Companies Served", 
+                color: "text-blue-400", 
+                bgColor: "from-blue-500 via-blue-600 to-blue-700",
+                accentColor: "from-blue-400 to-blue-500",
+                description: "Serving businesses across manufacturing, retail, and more."
+              },
+              { 
+                icon: <TrendingDown className="h-10 w-10" />, 
+                value: animatedNumbers.costReduction + "%", 
+                label: "Average Cost Reduction", 
+                color: "text-green-400", 
+                bgColor: "from-green-500 via-green-600 to-green-700",
+                accentColor: "from-green-400 to-green-500",
+                description: "Achieve significant cost savings through optimized inventory management."
+              },
+              { 
+                icon: <Heart className="h-10 w-10" />, 
+                value: animatedNumbers.satisfaction + "%", 
+                label: "Client Satisfaction", 
+                color: "text-purple-400", 
+                bgColor: "from-purple-500 via-purple-600 to-purple-700",
+                accentColor: "from-purple-400 to-purple-500",
+                description: "High satisfaction rate from our global clientele."
+              },
+              { 
+                icon: <Shield className="h-10 w-10" />, 
+                value: "24/7", 
+                label: "Support Available", 
+                color: "text-orange-400", 
+                bgColor: "from-orange-500 via-orange-600 to-orange-700",
+                accentColor: "from-orange-400 to-orange-500",
+                description: "24/7 technical support and assistance available."
+              }
             ].map((stat, index) => (
               <motion.div
                 key={index}
@@ -827,32 +921,70 @@ const InventoryManagementWebsite = () => {
                   y: -10,
                   transition: { duration: 0.3 }
                 }}
-                className="group"
+                className="group h-full"
               >
-                <div className="relative">
-                  {/* Professional card with enhanced design */}
-                  <div className="relative bg-white/10 backdrop-blur-md p-8 rounded-2xl text-center border border-white/20 hover:border-white/40 transition-all duration-300 shadow-2xl hover:shadow-3xl">
-                    {/* Enhanced icon with professional styling */}
+                <div className="relative h-full">
+                  {/* Enhanced professional card with equal height */}
+                  <div className="relative bg-gradient-to-br from-white/15 via-white/10 to-white/5 backdrop-blur-xl p-8 rounded-3xl text-center border border-white/30 hover:border-white/50 transition-all duration-500 shadow-2xl hover:shadow-3xl h-full flex flex-col justify-center">
+                    
+                    {/* Animated background glow */}
+                    <div className={`absolute inset-0 bg-gradient-to-br ${stat.bgColor} opacity-0 group-hover:opacity-10 rounded-3xl transition-opacity duration-500`}></div>
+                    
+                    {/* Enhanced icon with 3D effect */}
                     <motion.div 
-                      className={`inline-flex items-center justify-center w-20 h-20 rounded-full mb-6 relative overflow-hidden shadow-lg`}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ duration: 0.3 }}
+                      className="relative mb-8"
+                      whileHover={{ scale: 1.15, rotate: 5 }}
+                      transition={{ duration: 0.4 }}
                     >
-                      {/* Gradient background */}
-                      <div className={`absolute inset-0 bg-gradient-to-br ${stat.bgColor} rounded-full`}></div>
-                      
-                      {/* Shimmer overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                      
-                      {/* Icon */}
-                      <div className="relative z-10 text-white">
-                        {stat.icon}
+                      <div className={`relative w-24 h-24 mx-auto`}>
+                        {/* Outer glow ring */}
+                        <div className={`absolute inset-0 bg-gradient-to-r ${stat.accentColor} rounded-full blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-500`}></div>
+                        
+                        {/* Main icon container */}
+                        <div className={`relative w-full h-full bg-gradient-to-br ${stat.bgColor} rounded-full flex items-center justify-center shadow-2xl group-hover:shadow-3xl transition-all duration-500 border-2 border-white/20 group-hover:border-white/40`}>
+                          
+                          {/* Inner shine effect */}
+                          <div className="absolute inset-2 bg-gradient-to-br from-white/30 to-transparent rounded-full"></div>
+                          
+                          {/* Icon with enhanced styling */}
+                          <div className="relative z-10 text-white drop-shadow-lg">
+                            {stat.icon}
+                          </div>
+                          
+                          {/* Floating particles effect */}
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                            <motion.div
+                              animate={{ 
+                                scale: [1, 1.2, 1],
+                                opacity: [0.3, 0.8, 0.3]
+                              }}
+                              transition={{ 
+                                duration: 2, 
+                                repeat: Infinity,
+                                delay: index * 0.5
+                              }}
+                              className="absolute top-2 right-2 w-2 h-2 bg-white rounded-full"
+                            ></motion.div>
+                            <motion.div
+                              animate={{ 
+                                scale: [1, 1.3, 1],
+                                opacity: [0.4, 0.9, 0.4]
+                              }}
+                              transition={{ 
+                                duration: 2.5, 
+                                repeat: Infinity,
+                                delay: index * 0.5 + 0.5
+                              }}
+                              className="absolute bottom-3 left-3 w-1.5 h-1.5 bg-white rounded-full"
+                            ></motion.div>
+                          </div>
+                        </div>
                       </div>
                     </motion.div>
                     
-                    {/* Animated number with enhanced typography */}
+                    {/* Enhanced animated number */}
                     <motion.div 
-                      className="text-5xl lg:text-6xl font-bold text-white mb-3 font-mono tracking-tight"
+                      className="text-6xl lg:text-7xl font-bold text-white mb-4 font-mono tracking-tight drop-shadow-lg"
                       initial={{ scale: 0.5, opacity: 0 }}
                       whileInView={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.8, delay: index * 0.2 + 0.3 }}
@@ -861,15 +993,18 @@ const InventoryManagementWebsite = () => {
                       {stat.value}
                     </motion.div>
                     
-                    {/* Enhanced label */}
-                    <div className="text-gray-200 font-semibold text-lg tracking-wide mb-2">
+                    {/* Enhanced label with gradient text */}
+                    <div className="text-gray-100 font-bold text-xl tracking-wide mb-4 uppercase">
                       {stat.label}
                     </div>
                     
-                    {/* Professional description */}
-                    <div className="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      {getStatDescription(stat.label)}
+                    {/* Professional description with fade-in effect */}
+                    <div className="text-gray-300 text-sm leading-relaxed opacity-0 group-hover:opacity-100 transition-all duration-500 transform group-hover:translate-y-0 translate-y-2">
+                      {stat.description}
                     </div>
+                    
+                    {/* Bottom accent line */}
+                    <div className={`absolute bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r ${stat.accentColor} rounded-full opacity-0 group-hover:opacity-100 transition-all duration-500`}></div>
                   </div>
                 </div>
               </motion.div>
@@ -897,8 +1032,46 @@ const InventoryManagementWebsite = () => {
       </section>
 
       {/* Industries Section */}
-      <section id="solutions" className="py-20 professional-bg relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="solutions" className="py-20 relative overflow-hidden">
+        {/* Professional Background Image */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80')`
+          }}
+        ></div>
+        
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/95 via-slate-800/90 to-slate-900/95"></div>
+        
+        {/* Animated Background Elements */}
+        <div className="absolute inset-0 pointer-events-none">
+          <motion.div
+            animate={{ y: [-20, 20, -20], rotate: [0, 5, 0] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute top-20 left-10 w-16 h-16 bg-blue-500/10 rounded-full backdrop-blur-sm border border-blue-400/20"
+          ></motion.div>
+          
+          <motion.div
+            animate={{ y: [20, -20, 20], rotate: [0, -5, 0] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            className="absolute top-40 right-20 w-12 h-12 bg-green-500/10 rounded-full backdrop-blur-sm border border-green-400/20"
+          ></motion.div>
+          
+          <motion.div
+            animate={{ y: [-15, 15, -15], rotate: [0, 3, 0] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 4 }}
+            className="absolute bottom-20 left-1/4 w-20 h-20 bg-purple-500/10 rounded-full backdrop-blur-sm border border-purple-400/20"
+          ></motion.div>
+          
+          <motion.div
+            animate={{ y: [15, -15, 15], rotate: [0, -3, 0] }}
+            transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 6 }}
+            className="absolute bottom-40 right-1/3 w-14 h-14 bg-orange-500/10 rounded-full backdrop-blur-sm border border-orange-400/20"
+          ></motion.div>
+        </div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div 
             initial={{ y: 30, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -906,35 +1079,93 @@ const InventoryManagementWebsite = () => {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="mb-6"
+            >
+              <Badge variant="outline" className="bg-white/10 backdrop-blur-sm text-white border-white/20 px-6 py-3 text-sm font-medium">
+                <Factory className="h-5 w-5 mr-2" />
+                Industry Solutions
+              </Badge>
+            </motion.div>
+            <h2 className="text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
               Industries We Serve
             </h2>
-            <p className="text-xl text-gray-300">
-              Specialized solutions for diverse sectors
+            <p className="text-xl text-gray-200 max-w-2xl mx-auto">
+              Specialized solutions for diverse sectors with proven expertise
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {industries.map((industry, index) => (
-              <motion.div
-                key={index}
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: industry.delay }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5, scale: 1.02 }}
-                className="hover-lift"
-              >
-                <Card className="text-center bg-white shadow-dark hover:shadow-elevated">
-                  <CardContent className="p-6">
-                    <div className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${industry.color} text-white rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                      {industry.icon}
-                    </div>
-                    <h3 className="text-lg font-semibold text-professional-dark">{industry.name}</h3>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
+          <div className="relative">
+            {/* Carousel Container */}
+            <div className="embla overflow-hidden" ref={emblaRef}>
+              <div className="embla__container flex">
+                {industries.map((industry, index) => (
+                  <div key={index} className="embla__slide flex-[0_0_100%] min-w-0 md:flex-[0_0_50%] lg:flex-[0_0_25%] px-3">
+                    <motion.div
+                      initial={{ y: 50, opacity: 0 }}
+                      whileInView={{ y: 0, opacity: 1 }}
+                      transition={{ duration: 0.6, delay: industry.delay }}
+                      viewport={{ once: true }}
+                      whileHover={{ y: -8, scale: 1.05 }}
+                      className="group h-full"
+                    >
+                      <Card className="text-center bg-white shadow-dark hover:shadow-elevated transition-all duration-300 border-0 group-hover:border-blue-200 cursor-pointer h-full">
+                        <CardContent className="p-6">
+                          <motion.div 
+                            className={`inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br ${industry.color} text-white rounded-xl mb-4 group-hover:scale-110 transition-all duration-300 shadow-lg group-hover:shadow-xl`}
+                            whileHover={{ rotate: 5 }}
+                          >
+                            <div className="group-hover:scale-110 transition-transform duration-300">
+                              {industry.icon}
+                            </div>
+                          </motion.div>
+                          <h3 className="text-lg font-semibold text-professional-dark group-hover:text-blue-600 transition-colors duration-300">{industry.name}</h3>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Navigation Buttons */}
+            <motion.button
+              onClick={scrollPrev}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl z-10"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              suppressHydrationWarning
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </motion.button>
+
+            <motion.button
+              onClick={scrollNext}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl z-10"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              suppressHydrationWarning
+            >
+              <ChevronRight className="h-6 w-6" />
+            </motion.button>
+
+            {/* Dots Indicator */}
+            <div className="flex justify-center mt-8 space-x-2">
+              {Array.from({ length: Math.ceil(industries.length / 4) }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    if (emblaApi) emblaApi.scrollTo(index);
+                  }}
+                  className="w-3 h-3 rounded-full bg-white/30 hover:bg-white/60 transition-colors duration-300"
+                  suppressHydrationWarning
+                />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -1036,11 +1267,11 @@ const InventoryManagementWebsite = () => {
               Get started with a free consultation and discover how we can optimize your inventory management.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="shadow-elevated hover:shadow-professional">
+              <Button size="lg" className="shadow-elevated hover:shadow-professional" suppressHydrationWarning>
                 Schedule Consultation
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button variant="glass" size="lg" className="border-2 border-white/50 text-white hover:bg-white/20">
+              <Button variant="glass" size="lg" className="border-2 border-white/50 text-white hover:bg-white/20" suppressHydrationWarning>
                 Download Case Study
               </Button>
             </div>
@@ -1049,8 +1280,14 @@ const InventoryManagementWebsite = () => {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="contact" className="py-20 bg-white relative overflow-hidden">
+        {/* Subtle background pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          }}></div>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12">
             <motion.div
               initial={{ x: -50, opacity: 0 }}
@@ -1105,12 +1342,13 @@ const InventoryManagementWebsite = () => {
             >
               <Card className="shadow-professional">
                 <CardContent className="p-8">
-                  <div className="space-y-6">
+                  <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-semibold text-professional-dark mb-2">First Name</label>
                         <input 
                           type="text" 
+                          required
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white" 
                           suppressHydrationWarning
                         />
@@ -1119,6 +1357,7 @@ const InventoryManagementWebsite = () => {
                         <label className="block text-sm font-semibold text-professional-dark mb-2">Last Name</label>
                         <input 
                           type="text" 
+                          required
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white" 
                           suppressHydrationWarning
                         />
@@ -1128,6 +1367,7 @@ const InventoryManagementWebsite = () => {
                       <label className="block text-sm font-semibold text-professional-dark mb-2">Email</label>
                       <input 
                         type="email" 
+                        required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white" 
                         suppressHydrationWarning
                       />
@@ -1136,6 +1376,7 @@ const InventoryManagementWebsite = () => {
                       <label className="block text-sm font-semibold text-professional-dark mb-2">Company</label>
                       <input 
                         type="text" 
+                        required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white" 
                         suppressHydrationWarning
                       />
@@ -1144,14 +1385,31 @@ const InventoryManagementWebsite = () => {
                       <label className="block text-sm font-semibold text-professional-dark mb-2">Message</label>
                       <textarea 
                         rows={4} 
+                        required
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 bg-white" 
                         suppressHydrationWarning
                       />
                     </div>
-                    <Button className="w-full">
-                      Send Message
+                    <Button 
+                      type="submit" 
+                      className="w-full relative overflow-hidden"
+                      disabled={isSubmitting}
+                      suppressHydrationWarning
+                    >
+                      {isSubmitting ? (
+                        <div className="flex items-center justify-center">
+                          <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                            className="w-5 h-5 border-2 border-white border-t-transparent rounded-full mr-2"
+                          />
+                          Sending...
+                        </div>
+                      ) : (
+                        'Send Message'
+                      )}
                     </Button>
-                  </div>
+                  </form>
                 </CardContent>
               </Card>
             </motion.div>
@@ -1269,6 +1527,24 @@ const InventoryManagementWebsite = () => {
           </div>
         </div>
       </footer>
+
+      {/* Back to Top Button */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0 }}
+            onClick={scrollToTop}
+            className="fixed bottom-8 right-8 z-50 w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            suppressHydrationWarning
+          >
+            <ChevronUp className="h-6 w-6 group-hover:-translate-y-0.5 transition-transform duration-300" />
+          </motion.button>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
